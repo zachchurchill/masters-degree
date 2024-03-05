@@ -16,6 +16,8 @@
  */
 package com.zachurchill.homework2;
 
+import java.util.Arrays;
+
 /**
  * ArrayWrapper is an abstraction to simplify access to an
  * array, allowing adding elements, remove elements, retrieving
@@ -32,7 +34,8 @@ public class ArrayWrapper {
      * @param arraySize - the capacity of the array to allocate.
      */
     public ArrayWrapper(int arraySize) {
-        // TODO
+        this.data = new int[arraySize];
+        this.next = 0;
     }
 
     /**
@@ -41,8 +44,7 @@ public class ArrayWrapper {
      * occupied with valid data.
      */
     public int size() {
-        // TODO
-        return -1;
+        return this.next;
     }
 
     /**
@@ -52,8 +54,13 @@ public class ArrayWrapper {
      * @return true if the add was successful, false otherwise
      */
     public boolean add(int number) {
-        // TODO
-        return false;
+        try {
+            this.data[this.next] = number;
+            this.next++;
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        } 
     }
 
     /**
@@ -72,8 +79,8 @@ public class ArrayWrapper {
      * Use checkIndex to make sure that the index is valid.
      */
     public int get(int index) {
-        // TODO
-        return Integer.MAX_VALUE;
+        this.checkIndex(index);
+        return this.data[index];
     }
 
     /**
@@ -85,7 +92,10 @@ public class ArrayWrapper {
      * @return the old value that was stored at that index
      */
     public int put(int index, int value) {
-        return Integer.MAX_VALUE;
+        this.checkIndex(index);
+        int oldValue = this.data[index];
+        this.data[index] = value;
+        return oldValue;
     }
 
     /**
@@ -97,7 +107,15 @@ public class ArrayWrapper {
      * @returns true if the deletion was successful, false otherwise.
      */
     public boolean delete(int index) {
-        // TODO
-        return false;
+        try {
+            this.checkIndex(index);
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+        for (int i = 1; i < (this.size() - index); i++) {
+            this.data[index + i - 1] = this.data[index + i];
+        }
+        this.next--;
+        return true;
     }
 }

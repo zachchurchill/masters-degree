@@ -28,23 +28,22 @@ public class LineItem {
      * @param quantity - the quantity of that product
      */
     public LineItem(Product product, int quantity) {
-        // insert your code here
+        this.product = product;
+        this.quantity = quantity;
     }
 
     /**
      * Returns the product from the line item.
      */
     public Product getProduct() {
-        // replace this with your code
-        return null;
+        return this.product;
     }
 
     /**
      * Returns the quantity from the line item
      */
     public int getQuantity() {
-        // replace this with your code
-        return Integer.MAX_VALUE;
+        return this.quantity;
     }
 
     /**
@@ -52,8 +51,7 @@ public class LineItem {
      * product price multiplied by the quantity.
      */
     public double getPrice() {
-        // replace this with your code
-        return Double.MAX_VALUE;
+        return this.product.getPrice() * this.quantity;
     }
 
     /**
@@ -63,7 +61,6 @@ public class LineItem {
      * and only 2 decimal places).
      */
     public String toString() {
-        // replace this with your code
-        return "";
+        return String.format("%d %s is $%.2f", this.quantity, this.product.toString(), this.getPrice());
     }
 }

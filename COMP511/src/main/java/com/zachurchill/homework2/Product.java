@@ -28,23 +28,22 @@ public class Product {
      * @param price - the price for a single product
      */
     public Product(String name, double price) {
-        // insert your code here
+        this.name = name;
+        this.price = price;
     }
 
     /**
      * Returns the name of the product
      */
     public String getName() {
-        // replace this
-        return "";
+        return this.name;
     }
 
     /**
      * Returns the price of the product
      */
     public double getPrice() {
-        // TODO
-        return Double.MAX_VALUE;
+        return this.price;
     }
 
     /**
@@ -53,7 +52,6 @@ public class Product {
      * containing a dollar sign and only 2 decimal places).
      */
     public String toString() {
-        // TODO
-        return "";
+        return String.format("%s for $%.2f", this.name, this.price);
     }
 }

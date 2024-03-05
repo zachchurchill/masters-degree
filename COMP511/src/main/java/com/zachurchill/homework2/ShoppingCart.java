@@ -35,7 +35,8 @@ public class ShoppingCart {
      * Adds a line item to the list of line items.
      */
     public void addProduct(Product product, int quantity) {
-        // insert your code here
+        LineItem item = new LineItem(product, quantity);
+        this.items.add(item);
     }
 
     /**
@@ -43,8 +44,11 @@ public class ShoppingCart {
      * and quantities) in the shopping cart.
      */
     public double getCartTotal() {
-        // replace this with your code
-        return Double.MAX_VALUE;
+        double total = 0;
+        for (LineItem item : this.items) {
+            total += item.getPrice();
+        }
+        return total;
     }
 
     /**
@@ -52,7 +56,11 @@ public class ShoppingCart {
      * data and the total of everything in the shopping cart.
      */
     public String toString() {
-        // replace this with your code
-        return "";
+        List<String> entries = new ArrayList<>();
+        for (LineItem item : this.items) {
+            entries.add(item.toString());
+        }
+        entries.add(String.format("Total: $%.2f", this.getCartTotal()));
+        return String.join("\n", entries);
     }
 }
