@@ -6,14 +6,10 @@ public class SubtractExpression extends BinaryExpression {
     }
 
     public String getOperator() {
-        return null; // TODO
-    }
-
-    public String toString() {
-        return null; // TODO
+        return "-";
     }
 
     public int apply() {
-        return Integer.MAX_VALUE; // TODO
+        return this.left.apply() - this.right.apply();
     }
 }

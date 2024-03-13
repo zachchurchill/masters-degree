@@ -6,14 +6,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-class InheritanceProgrammingTests {
+class ConstantExpressionTests {
+
+    private MathExpression five;
 
     @BeforeEach
     void setUp() {
+        this.five = new ConstantExpression(5);
     }
 
     @Test
-    void testSomething() {
-        fail("TODO");
+    void testToString() {
+        assertEquals("5", this.five.toString());
+    }
+
+    @Test
+    void testApply() {
+        assertEquals(5, this.five.apply());
     }
 }

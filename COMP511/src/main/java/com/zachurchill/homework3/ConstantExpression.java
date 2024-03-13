@@ -1,15 +1,17 @@
 package com.zachurchill.homework3;
 
 public class ConstantExpression implements MathExpression {
+    private int number;
+
     public ConstantExpression(int number) {
-        // TODO
+        this.number = number;
     }
 
     public String toString() {
-        return null; // TODO
+        return Integer.toString(this.number);
     }
 
     public int apply() {
-        return Integer.MAX_VALUE; // TODO
+        return this.number;
     }
 }
