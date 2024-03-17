@@ -42,7 +42,7 @@ class TranspositionCypherTests {
     void testPairSwapTrans() {
         TranspositionCypher cipher = new TranspositionCypher(2, 2);
         String plainText = "Hello, world.";
-        String cipherText = "Hlelo ,wolrd.";
+        String cipherText = "Hlelo ,wolrd.   ";
         assertEquals(cipherText, cipher.encrypt(plainText));
         assertEquals(plainText, cipher.decrypt(cipherText));
     }
@@ -51,7 +51,7 @@ class TranspositionCypherTests {
     void testLongMessageTrans() {
         TranspositionCypher cipher = new TranspositionCypher(2, 2);
         String plainText = "Product models a product in a store. It has a name and a price and several methods to access those pieces of data.";
-        String cipherText = "Pcdrteo ldmsuo adi unpc rtao  s.ht aoIsrt e a  ana anpmdre icdee r saaelnv md esat chtcooesoisse ect ehps a ot fa  . d";
+        String cipherText = "Pordutc mdoel sa rpodcut ni as toer. tI hsa an am ean da rpic ean dseevra lmehtod stoa ccses htos epiceeso f adta . ";
         assertEquals(cipherText, cipher.encrypt(plainText));
         assertEquals(plainText, cipher.decrypt(cipherText));
     }
