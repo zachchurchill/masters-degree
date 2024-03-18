@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 
-class FileEncrypterStrategyTests {
+class FileEncrypterTests {
 
     private OutputStream outStream;
 
@@ -24,10 +24,9 @@ class FileEncrypterStrategyTests {
     void testSubstitutionEncrypt() {
         String plainText = "Hello, world.\nAttack at dawn!\n";
         InputStream plainTextStream = new ByteArrayInputStream(plainText.getBytes());
-        SubstitutionCypher cipher = new SubstitutionCypher("nopqrstuvwxyzabcdefghijklm");
         String cipherText = "Uryyb, jbeyq.\nNggnpx ng qnja!\n";
 
-        FileEncrypterStrategy fileEncrypter = new FileEncrypterStrategy(cipher);
+        FileEncrypter fileEncrypter = new SubstitutionCypher("nopqrstuvwxyzabcdefghijklm");
         fileEncrypter.encrypt(plainTextStream, this.outStream);
         assertEquals(cipherText, this.outStream.toString());
     }
@@ -35,11 +34,10 @@ class FileEncrypterStrategyTests {
     @Test
     void testSubstitutionDecrypt() {
         String plainText = "Hello, world.\nAttack at dawn!\n";
-        SubstitutionCypher cipher = new SubstitutionCypher("nopqrstuvwxyzabcdefghijklm");
         String cipherText = "Uryyb, jbeyq.\nNggnpx ng qnja!\n";
         InputStream cipherTextStream = new ByteArrayInputStream(cipherText.getBytes());
 
-        FileEncrypterStrategy fileEncrypter = new FileEncrypterStrategy(cipher);
+        FileEncrypter fileEncrypter = new SubstitutionCypher("nopqrstuvwxyzabcdefghijklm");
         fileEncrypter.decrypt(cipherTextStream, this.outStream);
         assertEquals(plainText, this.outStream.toString());
     }
@@ -48,10 +46,9 @@ class FileEncrypterStrategyTests {
     void testTranspositionEncrypt() {
         String plainText = "Hello, world.\nAttack at dawn!\n";
         InputStream plainTextStream = new ByteArrayInputStream(plainText.getBytes());
-        TranspositionCypher cipher = new TranspositionCypher(3, 5);
         String cipherText = "H,le dlw.lo or \nAkdt atawatnc !\n";
 
-        FileEncrypterStrategy fileEncrypter = new FileEncrypterStrategy(cipher);
+        FileEncrypter fileEncrypter = new TranspositionCypher(3, 5);
         fileEncrypter.encrypt(plainTextStream, this.outStream);
         System.out.println(cipherText);
         System.out.println(this.outStream.toString());
@@ -62,11 +59,10 @@ class FileEncrypterStrategyTests {
     @Test
     void testTranspositionDecrypt() {
         String plainText = "Hello, world.\nAttack at dawn!\n";
-        TranspositionCypher cipher = new TranspositionCypher(3, 5);
         String cipherText = "H,le dlw.lo or \nAkdt atawatnc !\n";
         InputStream cipherTextStream = new ByteArrayInputStream(cipherText.getBytes());
 
-        FileEncrypterStrategy fileEncrypter = new FileEncrypterStrategy(cipher);
+        FileEncrypter fileEncrypter = new TranspositionCypher(3, 5);
         fileEncrypter.decrypt(cipherTextStream, this.outStream);
         assertEquals(plainText, this.outStream.toString());
     }

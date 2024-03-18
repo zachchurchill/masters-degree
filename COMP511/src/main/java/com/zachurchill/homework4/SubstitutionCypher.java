@@ -1,6 +1,6 @@
 package com.zachurchill.homework4;
 
-class SubstitutionCypher {
+class SubstitutionCypher extends FileEncrypter implements EncryptionStrategy {
 
     private String lowerAlphabet = "abcdefghijklmnopqrstuvwxyz";
     private String upperAlphabet = lowerAlphabet.toUpperCase();

@@ -1,6 +1,6 @@
 package com.zachurchill.homework4;
 
-class TranspositionCypher {
+class TranspositionCypher extends FileEncrypter implements EncryptionStrategy {
 
     private int rows;
     private int cols;

@@ -5,13 +5,12 @@ import java.io.OutputStream;
 import java.util.Scanner;
 import java.io.PrintWriter;
 
-public class FileEncrypterStrategy {
-
-    private EncryptionStrategy strategy;
-
-    public FileEncrypterStrategy(EncryptionStrategy strategy) {
-        this.strategy = strategy;
+public abstract class FileEncrypter {
+    public FileEncrypter() {
     }
+
+    public abstract String encrypt(String plaintext);
+    public abstract String decrypt(String cyphertext);
 
     private void algorithm(boolean encrypt, InputStream inStream, OutputStream outStream) {
         Scanner scanner = new Scanner(inStream);
@@ -19,8 +18,8 @@ public class FileEncrypterStrategy {
 
         while (scanner.hasNextLine()) {
             String text = encrypt
-                ? this.strategy.encrypt(scanner.nextLine())
-                : this.strategy.decrypt(scanner.nextLine());
+                ? this.encrypt(scanner.nextLine())
+                : this.decrypt(scanner.nextLine());
             writer.write(text);
             writer.write("\n");
         }
