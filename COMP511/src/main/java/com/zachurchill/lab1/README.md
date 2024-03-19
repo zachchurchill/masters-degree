@@ -49,7 +49,9 @@ Otherwise the method must return false.
 ### Deleting an item
 
 An item is deleted from the library if it was lost or stolen.
-The method to delete an item takes the call number and the copy number of the item to be deleted as parameters and returns a Boolean value of true if the item was successfully deleted and false if it was not deleted. If there are multiple copies of the item in the library, the copy numbers of the other copies are not changed.
+The method to delete an item takes the call number and the copy number of the item to be deleted as parameters and returns a Boolean value of true if the item was successfully deleted and false if it was not deleted.
+If there are multiple copies of the item in the library,
+the copy numbers of the other copies are not changed.
 
 ### Checking out an item
 

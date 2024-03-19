@@ -2,6 +2,8 @@ package com.zachurchill.lab1;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.GregorianCalendar;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ public class AnytownLibraryTest {
     private Book book;
     private AudioRecording audio;
     private VideoRecording video;
+    private GregorianCalendar today;
 
     /**
      * Sets up the test fixture.
@@ -33,6 +36,7 @@ public class AnytownLibraryTest {
         audio.setCallNumber("audio");
         this.video = new VideoRecording();
         video.setCallNumber("video");
+        this.today = new GregorianCalendar(2024, 3, 19);
     }
 
     /**
@@ -50,26 +54,32 @@ public class AnytownLibraryTest {
      */
     @Test
     void testAddMultipleCopiesOfItem() {
-        Book physicalCopyOfBook = new Book();
-        physicalCopyOfBook.setCallNumber(this.book.getCallNumber());
+        Book anotherBook = new Book();
+        anotherBook.setCallNumber(this.book.getCallNumber());
+
+        AudioRecording anotherAudio = new AudioRecording();
+        anotherAudio.setCallNumber(this.audio.getCallNumber());
+
+        VideoRecording anotherVideo = new VideoRecording();
+        anotherVideo.setCallNumber(this.video.getCallNumber());
 
         assertTrue(this.library.addItem(this.book));
         assertEquals(1, this.book.getCopyNumber());
 
-        assertTrue(this.library.addItem(physicalCopyOfBook));
-        assertEquals(2, physicalCopyOfBook.getCopyNumber());
+        assertTrue(this.library.addItem(anotherBook));
+        assertEquals(2, anotherBook.getCopyNumber());
 
         assertTrue(this.library.addItem(this.audio));
         assertEquals(1, this.audio.getCopyNumber());
 
-        assertTrue(this.library.addItem(this.audio));
-        assertEquals(2, this.audio.getCopyNumber());
+        assertTrue(this.library.addItem(anotherAudio));
+        assertEquals(2, anotherAudio.getCopyNumber());
 
         assertTrue(this.library.addItem(this.video));
         assertEquals(1, this.video.getCopyNumber());
 
-        assertTrue(this.library.addItem(this.video));
-        assertEquals(2, this.video.getCopyNumber());
+        assertTrue(this.library.addItem(anotherVideo));
+        assertEquals(2, anotherVideo.getCopyNumber());
     }
 
     /**
@@ -137,20 +147,106 @@ public class AnytownLibraryTest {
      */
     @Test
     void testDeleteAndAddItems() {
+        String callNo = this.book.getCallNumber();
         Book physicalCopyOfBook = new Book();
-        physicalCopyOfBook.setCallNumber(this.book.getCallNumber());
+        physicalCopyOfBook.setCallNumber(callNo);
 
         library.addItem(this.book);
         library.addItem(this.audio);
         library.addItem(this.video);
         library.addItem(physicalCopyOfBook);
 
-        assertTrue(library.deleteItem(physicalCopyOfBook.getCallNumber(), 2));
-        assertEquals(1, library.findItems(this.book.getCallNumber()).length);
+        assertTrue(library.deleteItem(callNo, 1));
+        MediaItem[] books = library.findItems(callNo);
+        assertEquals(1, books.length);
+        assertEquals(2, books[0].getCopyNumber());
 
         Book anotherCopy = new Book();
-        anotherCopy.setCallNumber(this.book.getCallNumber());
+        anotherCopy.setCallNumber(callNo);
         library.addItem(anotherCopy);
-        assertEquals(2, anotherCopy.getCopyNumber());
+        assertEquals(3, anotherCopy.getCopyNumber());
+    }
+
+    /**
+     * Test checking out nonexistent item returns null.
+     */
+    @Test
+    void testCheckingOutNonexistentItemReturnsNull() {
+        assertNull(library.checkOut("LOTR", 1, "ZAC", this.today));
+    }
+
+    /**
+     * Test checking out book correctly sets borrower and due date.
+     */
+    @Test
+    void testCheckingOutCorrectSetsValues() {
+        library.addItem(this.book);
+
+        GregorianCalendar expectedDueDate = new GregorianCalendar(2024, 4, 19);
+        GregorianCalendar dueDate = library.checkOut(
+            this.book.getCallNumber(),
+            this.book.getCopyNumber(),
+            "ZAC",
+            this.today
+        );
+        assertEquals(expectedDueDate, dueDate);
+        assertEquals(expectedDueDate, this.book.getDueDate());
+        assertEquals("ZAC", this.book.getBorrower());
+    }
+
+    /**
+     * Test checking out already checked out book returns null.
+     */
+    @Test
+    void testCheckingOutAlreadyCheckedOutItemReturnsNull() {
+        library.addItem(this.book);
+
+        GregorianCalendar dueDate = library.checkOut(
+            this.book.getCallNumber(),
+            this.book.getCopyNumber(),
+            "ZAC",
+            this.today
+        );
+        assertNull(
+            library.checkOut(
+                this.book.getCallNumber(),
+                this.book.getCopyNumber(),
+                "ZAC",
+                this.today
+            )
+        );
+    }
+
+    /**
+     * Test checking in nonexistent item returns false.
+     */
+    @Test
+    void testCheckingInNonexistentItemReturnsFalse() {
+        assertFalse(library.checkIn("LOTR", 1));
+    }
+
+    /**
+     * Test checking in not already checked out book returns false.
+     */
+    @Test
+    void testCheckingInNotAlreadyCheckedOutItemReturnsFalse() {
+        library.addItem(this.book);
+        assertFalse(library.checkIn(this.book.getCallNumber(), this.book.getCopyNumber()));
+    }
+
+    /**
+     * Test checkIn happy path.
+     */
+    @Test
+    void testCheckingInBookReturnsTrueForCheckedOutBook() {
+        library.addItem(this.book);
+        GregorianCalendar expectedDueDate = new GregorianCalendar(2024, 4, 19);
+
+        library.checkOut(this.book.getCallNumber(), this.book.getCopyNumber(), "ZAC", this.today);
+        assertEquals(expectedDueDate, this.book.getDueDate());
+        assertEquals("ZAC", this.book.getBorrower());
+        assertTrue(library.checkIn(this.book.getCallNumber(), this.book.getCopyNumber()));
+        assertNull(this.book.getBorrower());
+        assertNull(this.book.getDueDate());
     }
 }

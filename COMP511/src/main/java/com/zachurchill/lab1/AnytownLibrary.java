@@ -1,6 +1,7 @@
 package com.zachurchill.lab1;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -40,9 +41,18 @@ public class AnytownLibrary implements Library
     public boolean addItem(MediaItem item)
     {
         if (catalog.size() < MAX_ITEMS) {
+            // Add item to the catalog
             catalog.add(item);
+
+            // Now assign appropriate copy number
             MediaItem[] copies = this.findItems(item.getCallNumber());
-            item.setCopyNumber(copies.length);
+            int maxCopyNumber = copies.length;
+            for (MediaItem copy : copies) {
+                if (copy.getCopyNumber() ==  maxCopyNumber) {
+                    maxCopyNumber++;
+                }
+            }
+            item.setCopyNumber(maxCopyNumber);
             return true;
         } else {
             return false;
@@ -80,8 +90,31 @@ public class AnytownLibrary implements Library
                                       int copy, String borrower,
                                       GregorianCalendar dateCheckedOut)
     {
-        /*# TODO: insert Code here */
-        return null;
+        MediaItem[] items = this.findItems(callNumber);
+        // If no items with callNumber exist, return null.
+        if (items.length == 0) {
+            return null;
+        }
+
+        // Now check for the item with the copy number & whether it is available
+        MediaItem foundItem = null;
+        for (MediaItem item : items) {
+            if (item.getCopyNumber() == copy) {
+                foundItem = item;
+                break;
+            }
+        }
+        if (foundItem == null || foundItem.getBorrower() != null) {
+            return null; 
+        }
+
+        // Finally, check book out with appropriate due date
+        foundItem.setBorrower(borrower);
+        GregorianCalendar dueDate = (GregorianCalendar)dateCheckedOut.clone();
+        dueDate.add(Calendar.DAY_OF_MONTH, 30);
+        foundItem.setDueDate(dueDate);
+
+        return dueDate;
     }
 
     /**
@@ -95,8 +128,28 @@ public class AnytownLibrary implements Library
      */
     public boolean checkIn(String callNumber, int copy)
     {
-        /*# TODO: insert Code here */
-        return false;
+        MediaItem[] items = this.findItems(callNumber);
+        // If no items with callNumber exist, return false.
+        if (items.length == 0) {
+            return false;
+        }
+
+        // Now check for the item with the copy number & whether it is checked out
+        MediaItem foundItem = null;
+        for (MediaItem item : items) {
+            if (item.getCopyNumber() == copy) {
+                foundItem = item;
+                break;
+            }
+        }
+        if (foundItem == null || foundItem.getBorrower() == null) {
+            return false; 
+        }
+
+        // Finally, check in item
+        foundItem.setBorrower(null);
+        foundItem.setDueDate(null);
+        return true;
     }
 
     /**
