@@ -15,8 +15,11 @@ public void algorithmFun1(int n) {
     }
 }
 ```
-**Time complexity:**
+**Time complexity:** O(n * log(n))
 **Explanation:**
+outer loop: O(n)
+inner loop: log2(n) * O(1) => O(log(n))
+therefore, O(n * log(n))
 
 ### Algorithm (B)
 ```{java}
@@ -28,8 +31,12 @@ public void algorithmFun2(int n) {
     }
 }
 ```
-**Time complexity:**
+**Time complexity:** O(n^2 * log(n))
 **Explanation:**
+loop: O(n)
+within loop: O(n * log(n)) + O(n/2 * log(n/2)) => O(n * log(n))
+therefore, O(n) * O(n * log(n)) => O(n^2 * log(n))
+
 
 ### Algorithm (C)
 ```{java}
@@ -43,5 +50,8 @@ public void algorithmFun3(int n, int m) {
     }
 }
 ```
-**Time complexity:**
+**Time complexity:**  O(n * log(m))
 **Explanation:**
+inner loop: log3(m) * O(1) => O(log(m))
+outer loop: n/2 * O(1) => O(n)
+therefore, O(n) * O(log(m)) => O(n * log(m))
