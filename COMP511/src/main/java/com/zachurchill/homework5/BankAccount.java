@@ -6,14 +6,29 @@ package com.zachurchill.homework5;
  */
 public class BankAccount {
 
+    private String customerName;
+    private double balance = 0.0;
+    private int transactions = 0;
+
     /**
      * Constructs a bank account belonging to the customer
      * with the given initial balance. The initial balance
      * cannot be negative. The customer's name cannot be null
      * nor can it be an empty string after being trimmed.
      */
-    public BankAccount(String customerName, double initialBalance) {
-        // your code here
+    public BankAccount(String customerName, double initialBalance)
+            throws AccountOwnerException, BadAmountException {
+        if (customerName == null) {
+            throw new AccountOwnerException("Customer name should not be null");
+        } else if(customerName.trim() == "") {
+            throw new AccountOwnerException("Customer name should not be empty");
+        }
+        this.customerName = customerName;
+
+        if (initialBalance < 0) {
+            throw new BadAmountException("Initial balance should be non-negative.");
+        }
+        this.balance = initialBalance;
     }
 
     /**
@@ -22,8 +37,7 @@ public class BankAccount {
      * should not be counted.
      */
     public int getTransactionCount() {
-        // your code here;
-        return -1;
+        return this.transactions;
     }
 
     /**
@@ -31,16 +45,14 @@ public class BankAccount {
      * account
      */
     public String getCustomerName() {
-        // your code here
-        return null;
+        return this.customerName;
     }
 
     /**
      * Returns the current balance of this account
      */
     public double getBalance() {
-        // your code here
-        return -1.0;
+        return this.balance;
     }
 
     /**
@@ -48,8 +60,14 @@ public class BankAccount {
      * positive deposit amounts are allowed. Successful
      * deposits increment the transaction count.
      */
-    public void deposit(double amount) {
-        // your code here
+    public void deposit(double amount) throws BadAmountException {
+		if (amount > 0) {
+            this.balance += amount;
+            this.transactions++;
+            System.out.println("deposit successful");
+        } else {
+            throw new BadAmountException("only non-zero, positive amounts allowed");
+        }
     }
 
     /**
@@ -58,8 +76,18 @@ public class BankAccount {
      * are not permitted to overdraft. Successful
      * withdrawals increment the transaction count.
      */
-    public void withdraw(double amount) {
-        // your code here
+    public void withdraw(double amount) throws BadAmountException, InsufficientFundsException {
+		if (amount > 0) {
+            if (amount <= this.balance) {
+                this.balance -= amount;
+                this.transactions++;
+                System.out.println("withdrawal successful");
+            } else {
+                throw new InsufficientFundsException("insufficient funds");
+            }
+        } else {
+            throw new BadAmountException("only non-zero, positive amounts allowed");
+        }
     }
 
     /**
@@ -70,8 +98,16 @@ public class BankAccount {
      * Successful transfers increment the transaction
      * count in both accounts.
      */
-    public void transfer(BankAccount destination, double amount) {
-        // your code here
+    public void transfer(BankAccount destination, double amount)
+            throws BadAmountException, InsufficientFundsException, AccountOwnerException {
+		if (this.getCustomerName() == destination.getCustomerName()) {
+            // these methods takes care of transaction counts
+            this.withdraw(amount);
+            destination.deposit(amount);
+            System.out.println("transfer complete");
+        } else {
+            throw new AccountOwnerException("same person must own both accounts");
+        }
     }
 
     /**
@@ -81,6 +117,11 @@ public class BankAccount {
      */
     public String toString() {
         // your code here
-        return null;
+        return String.format(
+            "BankAccount for %s, balance of %f with %d transactions",
+            this.getCustomerName(),
+            this.getBalance(),
+            this.getTransactionCount()
+        );
     }
 }
