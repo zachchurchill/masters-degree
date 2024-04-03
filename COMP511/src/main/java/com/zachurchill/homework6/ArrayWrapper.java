@@ -19,7 +19,6 @@ public class ArrayWrapper<T> {
      */
     @SuppressWarnings("unchecked")
     public ArrayWrapper(int arraySize) {
-        // add your code here
         data = (T[])(new Object[arraySize]);
         next = 0;
     }
@@ -30,8 +29,7 @@ public class ArrayWrapper<T> {
      * occupied with valid data.
      */
     public int size() {
-        // add your code here
-        throw new UnsupportedOperationException();
+        return this.next;
     }
 
     /**
@@ -41,8 +39,13 @@ public class ArrayWrapper<T> {
      * @return true if the add was successful, false otherwise.
      */
     public boolean add(T value) {
-        // add your code here
-        throw new UnsupportedOperationException();
+        if (this.next < this.data.length) {
+            this.data[this.next] = value;
+            this.next++;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -61,8 +64,8 @@ public class ArrayWrapper<T> {
      * Use checkIndex to make sure that the index is valid.
      */
     public T get(int index) {
-        // add your code here
-        throw new UnsupportedOperationException();
+        this.checkIndex(index);
+        return this.data[index];
     }
 
     /**
@@ -74,7 +77,10 @@ public class ArrayWrapper<T> {
      * @return the old value that was stored at that index
      */
     public T put(int index, T value) {
-        throw new UnsupportedOperationException();
+        this.checkIndex(index);
+        T oldValue = this.data[index];
+        this.data[index] = value;
+        return oldValue;
     }
     
     /**
@@ -85,15 +91,24 @@ public class ArrayWrapper<T> {
      * @returns true if the deletion was successful, false otherwise.
      */
     public boolean delete(int index) {
-        // add your code here
-        throw new UnsupportedOperationException();
+        if (index < this.size()) {
+            for (int i = index; i < this.size() - 1; i++) {
+                this.data[i] = this.data[i+1];
+            }
+            this.next--;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Uses a callback to implement the accumulator pattern -- see homework 3.
      */
     public void accumulate(Worker<T> worker) {
-        throw new UnsupportedOperationException();
+        for (int i = 0; i < this.size(); i++) {
+            worker.work(this.get(i));
+        }
     }
 
     /**
@@ -103,6 +118,7 @@ public class ArrayWrapper<T> {
      * @param j - the second index [0, size() - 1]
      */
     public void swap(int i, int j) {
-        throw new UnsupportedOperationException();
+        T oldValue = this.put(i, this.get(j));
+        this.put(j, oldValue);
     }
 }

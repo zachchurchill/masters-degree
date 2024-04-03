@@ -3,7 +3,8 @@ package com.zachurchill.homework6;
 /**
  * Worker
  */
-public class Worker<T> {
+public interface Worker<T> {
 
-    
+    void work(T input);
+
 }
