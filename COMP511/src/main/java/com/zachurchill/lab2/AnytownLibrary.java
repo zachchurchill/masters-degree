@@ -1,5 +1,6 @@
 package com.zachurchill.lab2;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -246,8 +247,22 @@ public class AnytownLibrary implements Library
     public GregorianCalendar renew(String callNumber, 
         int copy, String borrower, GregorianCalendar currentDate)
     {
-        /*# TODO: insert Code here */ 
-        return null;
+        int foundIndex = this.findItem(callNumber, copy);
+        if (foundIndex == -1) {
+            return null;
+        }
+        MediaItem item = this.items[foundIndex];
+        if (!(item instanceof Book)) {
+            return null;
+        }
+        GregorianCalendar dueDate = item.getDueDate();
+        if (this.calculateDateDiff(currentDate, dueDate) < 0) {
+            return null;
+        } else if (borrower != item.getBorrower()) {
+            return null;
+        }
+        dueDate.add(Calendar.DAY_OF_YEAR, 14);
+        return dueDate;
     }
     
     /**
@@ -259,7 +274,15 @@ public class AnytownLibrary implements Library
      */
     public Book[] renew(String borrower, GregorianCalendar currentDate)
     {
-        /*# TODO: insert Code here */ 
-        return null;
+        ArrayList<Book> renewedBooks = new ArrayList<>();
+        for (MediaItem item : this.items) {
+            if (item != null && item.getBorrower() == borrower) {
+                GregorianCalendar newDueDate = this.renew(item.getCallNumber(), item.getCopyNumber(), borrower, currentDate);
+                if (newDueDate != null) {
+                    renewedBooks.add((Book) item);
+                }
+            }
+        }
+        return renewedBooks.toArray(new Book[0]);
     }
 }
