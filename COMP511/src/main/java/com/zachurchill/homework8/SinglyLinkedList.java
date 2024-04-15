@@ -28,7 +28,18 @@ public class SinglyLinkedList<E> {
      * @throws IndexOutOfBoundsException for bad indices
      */
     public E get(int index) {
-        throw new UnsupportedOperationException();
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("provide valid index");
+        }
+        Link<E> current = head;
+        for (int i = 0; i < size; ++i) {
+            if (i == index) {
+                break;
+            } else {
+                current = current.next;
+            }
+        }
+        return current.data;
     }
 
     /**
@@ -58,7 +69,15 @@ public class SinglyLinkedList<E> {
      * @return the index where it is found or -1 if not found
      */
     public int indexOf(E element, int start) {
-        throw new UnsupportedOperationException();
+        if (start < 0 || start >= size) {
+            throw new IllegalArgumentException("provide valid index");
+        }
+        for (int i = start; i < size; ++i) {
+            if (get(i) == element) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -76,10 +95,18 @@ public class SinglyLinkedList<E> {
      * @param end the end index for the search
      * @return the index where it is found or -1 if not found
      */
-    public int lastIndexOf(E element, int start) {
-        // this is tricky because you can't move backwards
-        // through a singly linked list.
-        throw new UnsupportedOperationException();
+    public int lastIndexOf(E element, int end) {
+        if (end < 0 || end > size) {
+            throw new IllegalArgumentException("provide valid index");
+        }
+        int lastIndex = -1;
+        for (int i = 0; i <= end; ++i) {
+            E el = get(i);
+            if (el == element) {
+                lastIndex = i;
+            }
+        }
+        return lastIndex;
     }
 
     /**
@@ -96,6 +123,106 @@ public class SinglyLinkedList<E> {
      */
     public SinglyLinkedList<E> slice(int start, int stop) {
         throw new UnsupportedOperationException();
+    }
+
+    /* ~~~~~~~~ Following methods from week8.jar file ~~~~~~~~ */
+
+    /**
+     * This method will append copies of the links
+     * of the parameter list to "this" list at the
+     * end. The method should not change the other list.
+     * 
+     * For example, given two lists:
+     *  list_1 = [1, 2, 3]
+     *  list_2 = [4, 5, 6]
+     * then list_1.append(list_2) should make list_1
+     * contain [1, 2, 3, 4, 5, 6] and list_2 should
+     * still be [4, 5, 6]
+     * 
+     * @param other - the list to append onto this one
+     */
+    public void append(SinglyLinkedList<E> other) {
+        if (other.size != 0)  {
+            Link<E> node = other.head; // arrive at the 1st node
+            while (node != null) {
+                add(node.data); // add the value into the 1at list
+                node = node.next;
+            }
+        } 
+    }
+    
+    public boolean add(E value) {
+        Link<E> node = new Link<>();
+        node.data = value;
+        node.next = null;
+
+        if (this.size == 0) { // 1st node to be added
+            head = tail = node;
+
+        } else { // appending the node to the tail end
+            tail.next = node;
+            tail = node;
+             
+        }
+        size++;
+        return true;
+    }
+
+    /**
+     * This method will prepend copies of the links
+     * of the parameter list to "this" list at the
+     * front. The method should not change the other list.
+     * 
+     * For example, given two lists:
+     *  list_1 = [1, 2, 3]
+     *  list_2 = [4, 5, 6]
+     * then list_1.prepend(list_2) should make list_1
+     * contain [4, 5, 6, 1, 2, 3] and list_2 should
+     * still be [4, 5, 6]
+     * 
+     * @param other - the list to append onto this one
+     */
+    public void prepend(SinglyLinkedList<E> other) {
+        SinglyLinkedList<E> thirdList = new SinglyLinkedList<>();
+        if (other.size != 0) {
+            thirdList.append(other);
+            thirdList.append(this);
+            
+            this.head = thirdList.head;
+            this.tail = thirdList.tail;
+            this.size = thirdList.size;
+        }
+    }
+
+    /**
+     * This function returns a copy of this SinglyLinkedList
+     * except that the head element is removed. This list
+     * should remain unchanged. This is similar to how the
+     * Lisp function cdr() works.
+     * 
+     * For example, given the list:
+     *  list_1 = [5, 4, 3, 2, 1]
+     * then
+     *  list_2 = list_1.cdr()
+     * should yield:
+     *  list_1 as [5, 4, 3, 2, 1]
+     *  list_2 as [4, 3, 2, 1]
+     * 
+     */
+    public SinglyLinkedList<E> cdr() {
+        SinglyLinkedList<E> cdrList = new SinglyLinkedList<>();
+        if (this.size > 1) {
+            Link<E> node = head; // 1st node in the list
+            node = node.next; // 2nd node in the list
+            while (node != null) {
+                cdrList.add(node.data);
+                node = node.next;
+            }
+        } else if (this.size == 0) {
+            cdrList = null;
+        } // if this.size == 1 return cdrList, i.e., empty list
+        
+        return cdrList;
     }
 
     /**
