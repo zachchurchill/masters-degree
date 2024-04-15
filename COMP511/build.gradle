@@ -18,3 +18,16 @@ test {
 		events "passed", "skipped", "failed"
 	}
 }
+
+sourceSets {
+    main {
+        java {
+            exclude '**/homework7/*.java'
+        }
+    }
+    test {
+        java {
+            exclude '**/homework7/*.java'
+        }
+    }
+}
