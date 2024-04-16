@@ -52,7 +52,20 @@ public class SinglyLinkedList<E> {
      * @throws IndexOutOfBoundsException for bad indices
      */
     public E set(int index, E value) {
-        throw new UnsupportedOperationException();
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("provide valid index");
+        }
+        Link<E> current = head;
+        for (int i = 0; i < index; ++i) {
+            if (i == index) {
+                break;
+            } else {
+                current = current.next;
+            }
+        }
+        E oldValue = current.data;
+        current.data = value;
+        return oldValue;
     }
 
     /**
@@ -122,7 +135,16 @@ public class SinglyLinkedList<E> {
      * @throws IllegalArgumentException when the indices are invalid
      */
     public SinglyLinkedList<E> slice(int start, int stop) {
-        throw new UnsupportedOperationException();
+        if (stop < start) {
+            throw new IllegalArgumentException("stop must be larger than start");
+        } else if (start < 0 || stop < 0 || start > size || stop > size) {
+            throw new IllegalArgumentException("provide valid indices");
+        }
+        SinglyLinkedList<E> sliced = new SinglyLinkedList<>();
+        for (int i = start; i < stop; ++i) {
+            sliced.add(get(i));
+        }
+        return sliced;
     }
 
     /* ~~~~~~~~ Following methods from week8.jar file ~~~~~~~~ */

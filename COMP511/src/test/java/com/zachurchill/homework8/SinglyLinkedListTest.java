@@ -102,4 +102,88 @@ class SinglyLinkedListTest {
         this.linkedList.add("thirty one");
         assertEquals(12, this.linkedList.lastIndexOf("one", 12));
     }
+
+    @Test
+    public void testSliceIllegalArgumentExceptionStartNegative() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        assertThrows(IllegalArgumentException.class, () -> this.linkedList.slice(-1, 2));
+    }
+
+    @Test
+    public void testSliceIllegalArgumentExceptionStopNegative() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        assertThrows(IllegalArgumentException.class, () -> this.linkedList.slice(1, -2));
+    }
+
+    @Test
+    public void testSliceIllegalArgumentExceptionStartLargerThanSize() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        assertThrows(IllegalArgumentException.class, () -> this.linkedList.slice(3, 5));
+    }
+
+    @Test
+    public void testSliceIllegalArgumentExceptionStopLargerThanSize() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        assertThrows(IllegalArgumentException.class, () -> this.linkedList.slice(1, 5));
+    }
+
+    @Test
+    public void testSliceIllegalArgumentExceptionStopLessThanStart() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        this.linkedList.add("one");
+        this.linkedList.add("five");
+        this.linkedList.add("nine");
+        this.linkedList.add("two");
+        this.linkedList.add("six");
+        assertThrows(IllegalArgumentException.class, () -> this.linkedList.slice(2, 1));
+    }
+
+    @Test
+    public void testSliceExamples() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        this.linkedList.add("one");
+        this.linkedList.add("five");
+        this.linkedList.add("nine");
+        this.linkedList.add("two");
+        this.linkedList.add("six");
+
+        SinglyLinkedList<String> example1 = new SinglyLinkedList<>();
+        example1.add("four");
+        example1.add("one");
+        assertEquals(example1.toString(), this.linkedList.slice(2, 4).toString());
+
+        SinglyLinkedList<String> example2 = new SinglyLinkedList<>();
+        assertEquals(example2.toString(), this.linkedList.slice(2, 2).toString());
+    }
+
+    @Test
+    public void testIndexOutOfBoundsErrorForSet() {
+        assertThrows(IndexOutOfBoundsException.class, () -> this.linkedList.set(1, "fifty"));
+    }
+
+    @Test
+    public void testSet() {
+        this.linkedList.add("three");
+        this.linkedList.add("one");
+        this.linkedList.add("four");
+        this.linkedList.add("one");
+        this.linkedList.add("five");
+        this.linkedList.add("nine");
+        this.linkedList.add("two");
+        this.linkedList.add("six");
+        assertEquals("five", this.linkedList.set(4, "fifty"));
+        assertEquals("fifty", this.linkedList.get(4));
+    }
 }
