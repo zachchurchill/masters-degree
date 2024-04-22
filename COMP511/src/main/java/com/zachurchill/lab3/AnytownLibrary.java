@@ -3,6 +3,7 @@ package com.zachurchill.lab3;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Represents a library.
@@ -12,23 +13,15 @@ import java.util.List;
  */
 public class AnytownLibrary implements Library
 {
-    /**
-     * The maximum number of items allowed in the library.
-     */
-    public static final int MAX_ITEMS = 500;
 
-    /*# TODO: Change implementation to use a List */
-    private MediaItem[] items;
-    private int numItems;
+    private ArrayList<MediaItem> items;
 
     /**
      * Constructor for objects of class AnytownLibrary.
      */
     public AnytownLibrary()
     {
-        /*# TODO: Change implementation to use a List */
-        items = new MediaItem[MAX_ITEMS];
-        numItems = 0;
+        this.items = new ArrayList<>();
     }
 
     /**
@@ -45,28 +38,23 @@ public class AnytownLibrary implements Library
      */
     public boolean addItem(MediaItem item)
     {
-        /*# TODO: Change implementation to use a List */
-        if ((item == null) || (numItems == MAX_ITEMS))
-        {
+        if (item == null) {
             return false;
         }
 
         int highestCopy = 0;
-
-        for (int i = 0; i < numItems; i++)
-        {
-            MediaItem anItem = items[i];
+        for (MediaItem anItem : this.items) {
             if (item.getCallNumber().equals(anItem.getCallNumber()) &&
                             anItem.getCopyNumber() > highestCopy)
             {
                 highestCopy = anItem.getCopyNumber();
             }
+
         }
 
         item.setCopyNumber(highestCopy + 1);
 
-        items[numItems++] = item;
-        return true;
+        return this.items.add(item);
     }
 
     /**
@@ -78,20 +66,15 @@ public class AnytownLibrary implements Library
      */
     private int findItem(String callNumber, int copy)
     {
-        /*# TODO: Determine what to do with this method
-           Note that because the method is private, it can be deleted
-           if it is no longer needed, or replaced with a different method.
-           */
-        for (int i = 0; i < numItems; i++)
-        {
-            MediaItem item = items[i];
+        ListIterator<MediaItem> itr = this.items.listIterator();
+        while (itr.hasNext()) {
+            MediaItem item = itr.next();
             if (callNumber.equals(item.getCallNumber()) &&
                             item.getCopyNumber() == copy)
             {
-                return i;
+                return itr.previousIndex();
             }
         }
-
         return -1;
     }
 
@@ -105,7 +88,6 @@ public class AnytownLibrary implements Library
      */
     public boolean deleteItem(String callNumber, int copy)
     {
-        /*# TODO: Change implmentation to use a List */
         if (callNumber == null)
         {
             return false;
@@ -117,10 +99,7 @@ public class AnytownLibrary implements Library
         {
             return false;
         }
-
-        items[index] = items[numItems - 1];
-        items[numItems - 1] = null;
-        numItems--;
+        this.items.remove(index);
         return true;
     }
 
@@ -139,15 +118,13 @@ public class AnytownLibrary implements Library
                                       int copy, String borrower,
                                       GregorianCalendar dateCheckedOut)
     {
-        /*# TODO: Change implementation to use a List */
         int index = findItem(callNumber, copy);
-
         if (index == -1)
         {
             return null;
         }
 
-        MediaItem item = items[index];
+        MediaItem item = this.items.get(index);
 
         //  Fail if the item is already checked out
         if (item.getDueDate() != null)
@@ -174,15 +151,13 @@ public class AnytownLibrary implements Library
      */
     public boolean checkIn(String callNumber, int copy)
     {
-        /*# TODO: Change implementation to use a List */
         int index = findItem(callNumber, copy);
-
         if (index == -1)
         {
             return false;
         }
 
-        MediaItem item = items[index];
+        MediaItem item = this.items.get(index);
 
         //  Fail if it wasn't checked out
         if (item.getBorrower() == null || item.getDueDate() == null)
@@ -208,21 +183,20 @@ public class AnytownLibrary implements Library
     {
         int matchCount = 0;
 
-        /*# TODO: Change implementation to use a List but still return an array */
-        for (int i = 0; i < numItems; i++)
+        for (MediaItem item : this.items)
         {
-            if (callNumber.equals(items[i].getCallNumber()))
+            if (callNumber.equals(item.getCallNumber()))
             {
                 matchCount++;
             }
         }
         MediaItem [] found = new MediaItem[matchCount];
         matchCount = 0;
-        for (int i = 0; i < numItems; i++)
+        for (MediaItem item : this.items)
         {
-            if (callNumber.equals(items[i].getCallNumber()))
+            if (callNumber.equals(item.getCallNumber()))
             {
-                found[matchCount++] = items[i];
+                found[matchCount++] = item;
             }
         }
         return found;
@@ -260,14 +234,13 @@ public class AnytownLibrary implements Library
     public GregorianCalendar renew(String callNumber,
         int copy, String borrower, GregorianCalendar currentDate)
     {
-        /*# TODO: Change implementation to use a List */
         int index = findItem(callNumber, copy);
         if (index == -1)
         {
             return null;
         }
 
-        MediaItem item = items[index];
+        MediaItem item = this.items.get(index);
         if (canRenew(item, borrower, currentDate))
         {
             return renewBook((Book)item);
@@ -288,11 +261,8 @@ public class AnytownLibrary implements Library
 
         int numToRenew = 0;
 
-        /*# TODO: Change implementation to use a List but still return an array */
         //  First count how many we can renew
-        for (int i = 0; i < numItems; i++)
-        {
-            MediaItem item = items[i];
+        for (MediaItem item : this.items) {
             if (canRenew(item, borrower, currentDate))
             {
                 numToRenew++;
@@ -303,9 +273,7 @@ public class AnytownLibrary implements Library
         int numRenewed = 0;
 
         //  Now renew them, and put them into the array
-        for (int i = 0; i < numItems; i++)
-        {
-            MediaItem item = items[i];
+        for (MediaItem item : this.items) {
             if (canRenew(item, borrower, currentDate))
             {
                 Book book = (Book)item;
@@ -367,12 +335,7 @@ public class AnytownLibrary implements Library
      */
     public MediaItem [] getItems()
     {
-        /*# TODO: Change implementation to use a List but still return an array */
-        MediaItem [] copy = new MediaItem[numItems];
-
-        System.arraycopy(items, 0, copy, 0, numItems);
-
-        return copy;
+        return this.items.toArray(new MediaItem[0]);
     }
     
     /**
