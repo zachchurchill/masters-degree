@@ -349,7 +349,12 @@ public class AnytownLibrary implements Library
     */
     public List<MediaItem> searchItems(MatchMaker criterion)
     {
-        /*# TODO: insert Code here */
-        throw new UnsupportedOperationException();
+        ArrayList<MediaItem> found = new ArrayList<>(0);
+        for (MediaItem item : this.items) {
+            if (criterion.matches(item)) {
+                found.add(item);
+            }
+        }
+        return found;
     }
 }

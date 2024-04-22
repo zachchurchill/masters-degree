@@ -1,21 +1,21 @@
 package com.zachurchill.lab3;
 
-import java.util.List;
 /**
- * Write a description of class TitleMatch here.
+ * Provides matching criterion on exact title matches.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Zach Churchill <church58@email.franklin.edu>
+ * @version 2024-04-23
  */
 public class TitleMatch implements MatchMaker
 {
-    public TitleMatch(String title) {
+    private String title;
 
+    public TitleMatch(String title) {
+        this.title = title;
     }
 
     @Override
     public boolean matches(MediaItem item) {
-        /*# TODO: insert Code here */
-        throw new UnsupportedOperationException();
+        return title == item.getTitle();
     }
 }

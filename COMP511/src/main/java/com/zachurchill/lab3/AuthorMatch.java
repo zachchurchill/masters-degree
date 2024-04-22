@@ -1,21 +1,26 @@
 package com.zachurchill.lab3;
 
-import java.util.List;
 /**
- * Write a description of class AuthorMatch here.
+ * Provides matching criterion on exact last names for authors.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Zach Churchill <church58@email.franklin.edu>
+ * @version 2024-04-23
  */
 public class AuthorMatch implements MatchMaker
 {
-    public AuthorMatch(String author) {
+    private String lastName;
 
+    public AuthorMatch(String author) {
+        this.lastName = author;
     }
     
     @Override
     public boolean matches(MediaItem item) {
-        /*# TODO: insert Code here */
-        throw new UnsupportedOperationException();
+        if (!(item instanceof Book)) {
+            return false;
+        }
+        Book book = (Book) item;
+        String[] names = book.getAuthor().split(" ");
+        return this.lastName.equals(names[names.length - 1]);
     }
 }

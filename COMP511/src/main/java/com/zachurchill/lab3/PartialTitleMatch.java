@@ -1,21 +1,21 @@
 package com.zachurchill.lab3;
 
-import java.util.List;
 /**
- * Write a description of class PartialTitleMatch here.
+ * Provides matching criterion for non-case sensitive partial matches on the title.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Zach Churchill <church58@email.franklin.edu>
+ * @version 2024-04-23
  */
 public class PartialTitleMatch implements MatchMaker
 {
-    public PartialTitleMatch(String title) {
+    private String titleContains;
 
+    public PartialTitleMatch(String title) {
+        this.titleContains = title.toLowerCase();
     }
 
     @Override
     public boolean matches(MediaItem item) {
-        /*# TODO: insert Code here */
-        throw new UnsupportedOperationException();
+        return item.getTitle().toLowerCase().contains(this.titleContains);
     }
 }
