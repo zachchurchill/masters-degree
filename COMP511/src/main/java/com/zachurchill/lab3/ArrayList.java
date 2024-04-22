@@ -1,6 +1,7 @@
 package com.zachurchill.lab3;
 
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -56,6 +57,40 @@ public class ArrayList<E> extends AbstractList<E> {
 	}
 
     /**
+     * Returns a restricted subList available for editing.
+     * <Not used>
+     */
+    public List<E> subList(int fromIndex, int toIndex) {
+        return null;
+    }
+
+    /**
+     * Adds all elements from parameter collection at specified index.
+     */
+	@Override
+    public boolean addAll(int index, Collection<? extends E> coll) {
+        if (coll.size() == 0) {
+            return false;
+        }
+
+        ArrayList<E> newData = new ArrayList<>();
+        for (int i = 0; i < index; i++) {
+            newData.add(this.get(i));
+        }
+        for (Iterator<?> collItr = coll.iterator(); collItr.hasNext(); ) {
+            newData.add((E) collItr.next());
+        }
+        for (Iterator<E> itr = listIterator(index); itr.hasNext(); ) {
+            newData.add(itr.next());
+        }
+        clear();
+        for (Iterator<E> itr = newData.iterator(); itr.hasNext(); ) {
+            this.add(itr.next());
+        }
+        return true;
+    }
+
+    /**
      * Returns an Iterator object to traverse the data.
      */
     public Iterator<E> iterator() {
@@ -105,6 +140,7 @@ public class ArrayList<E> extends AbstractList<E> {
          * Returns the next element in the list.
          */
         public E next() {
+            checkForComodification();
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -123,6 +159,7 @@ public class ArrayList<E> extends AbstractList<E> {
          * Returns the previous element in the list.
          */
         public E previous() {
+            checkForComodification();
             if (!hasPrevious()) {
                 throw new NoSuchElementException();
             }
@@ -150,6 +187,7 @@ public class ArrayList<E> extends AbstractList<E> {
          * @throws ConcurrentModificationException
          */
         public void remove() {
+            checkForComodification();
             if (priorCursor == BAD_CURSOR) {
                 throw new NoSuchElementException("no prior call to next or previous");
             }
@@ -160,6 +198,7 @@ public class ArrayList<E> extends AbstractList<E> {
             cursor = priorCursor;
             --size;
             priorCursor = BAD_CURSOR;
+            updateAndSynchronizeModCounts();
         }
 
         /**
@@ -168,6 +207,7 @@ public class ArrayList<E> extends AbstractList<E> {
          * @throws ConcurrentModificationException
          */
         public void add(E obj) {
+            checkForComodification();
             ensureCapacity(size + 1);
             for (int i = size; i > cursor; --i) {
                 data[i] = data[i - 1];
@@ -175,14 +215,26 @@ public class ArrayList<E> extends AbstractList<E> {
             data[cursor] = obj;
             ++cursor;
             ++size;
+            updateAndSynchronizeModCounts();
+        }
+
+        /**
+         * Replaces the last element returned by next or previous.
+         */
+        public void set(E obj) {
+            checkForComodification();
+            data[priorCursor] = obj;
         }
 
         protected void checkForComodification() {
-            // etc.
+            if (expectedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
         }
         
         protected void updateAndSynchronizeModCounts() {
-            // etc
+            ++modCount;
+            expectedModCount = modCount;
         }
     }
 }

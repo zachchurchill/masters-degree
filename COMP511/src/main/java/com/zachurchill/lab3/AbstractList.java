@@ -1,6 +1,9 @@
 package com.zachurchill.lab3;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Iterator;
 import static com.zachurchill.lab3.Utilities.nullSafeEquals;
 
 /**
@@ -72,6 +75,19 @@ implements List<E>
     }
 
     /**
+     * Sets the element at a particular index and returns previous object.
+     */
+    public E set(int index, E obj) {
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException("invalid index: " + index);
+        }
+        ListIterator<E> itr = listIterator(index);
+        E result = itr.next();
+        itr.set(obj);
+        return result;
+    }
+
+    /**
      * Returns the location in the list of the first element that matches
      * the parameter object <tt>obj</tt> according to its equals method.
      * @param obj the object for which to search
@@ -103,5 +119,35 @@ implements List<E>
             }
         }
         return -1;
+    }
+
+	/**
+	 * Searches this collection to see if every element in parameter collection
+     * exists in this collection.
+	 */
+	public boolean containsAll(Collection<?> coll) {
+        ArrayList<Boolean> doesContain = new ArrayList<>();
+        Iterator<?> itr = coll.iterator();
+        while(itr.hasNext()) {
+            doesContain.add(this.contains(itr.next()));
+        }
+        return !doesContain.contains(false);
+    }
+
+    /**
+     * Retains all the elements in this collection that match those in the
+     * parameter collection.
+     */
+	public boolean retainAll(Collection<?> coll) {
+        boolean altered = false;
+        for (Iterator<E> itr = this.iterator(); itr.hasNext(); ) {
+            E el = itr.next();
+            if (!coll.contains(el)) {
+                System.out.println("removing...");
+                itr.remove();
+                altered = altered || true;
+            }
+        }
+        return altered;
     }
 }
