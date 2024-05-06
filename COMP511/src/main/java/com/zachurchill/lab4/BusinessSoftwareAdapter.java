@@ -2,6 +2,8 @@ package com.zachurchill.lab4;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Adapts a BusinessSoftware object to the MediaItem interface.
@@ -11,8 +13,12 @@ import java.util.GregorianCalendar;
  */
 public class BusinessSoftwareAdapter implements MediaItem {
 
+    private BusinessSoftware businessSoftware;
+    private String callNumber;
+    private int copyNumber;
+
     public BusinessSoftwareAdapter(BusinessSoftware software) {
-        throw new UnsupportedOperationException("Not written");
+        this.businessSoftware = software;
     }
 
     /**
@@ -21,7 +27,7 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @return      the call number.
      */
     public String getCallNumber() {
-        throw new UnsupportedOperationException("Not written");
+        return this.callNumber;
     }
 
     /**
@@ -30,7 +36,14 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @param   callNo the call number for the item
      */
     public void setCallNumber(String callNo) {
-        throw new UnsupportedOperationException("Not written");
+        if (callNo == null || callNo.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        Matcher specialChars = Pattern.compile("[^a-zA-Z0-9]").matcher(callNo);
+        if (specialChars.find()) {
+            throw new IllegalArgumentException("no special characters");
+        }
+        this.callNumber = callNo;
     }
 
     /**
@@ -39,7 +52,7 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @return  the copy number.
      */
     public int getCopyNumber() {
-        throw new UnsupportedOperationException("Not written");
+        return this.copyNumber;
     }
 
     /**
@@ -48,7 +61,10 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @param   copy    the copy number.
      */
     public void setCopyNumber(int copy) {
-        throw new UnsupportedOperationException("Not written");
+        if (copy < 1) {
+            throw new IllegalArgumentException();
+        }
+        this.copyNumber = copy;
     }
 
     /**
@@ -57,7 +73,14 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @return  the title of the item.
      */
     public String getTitle() {
-        throw new UnsupportedOperationException("Not written");
+        if (this.businessSoftware.getApplicationName() == null && this.businessSoftware.getPublisher() == null) {
+            return null;
+        }
+        return String.format(
+            "%s:%s",
+            this.businessSoftware.getPublisher(),
+            this.businessSoftware.getApplicationName()
+        );
     }
 
     /**
@@ -66,7 +89,16 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @param   itemTitle  the title.
      */
     public void setTitle(String itemTitle) {
-        throw new UnsupportedOperationException("Not written");
+        if (itemTitle == null) {
+            throw new IllegalArgumentException("non null string required");
+        } else if (!itemTitle.contains(":")) {
+            throw new IllegalArgumentException(
+                String.format("`itemTitle` must contain ':'; received '%s'", itemTitle)
+            );
+        }
+        String[] titleParts = itemTitle.split(":");
+        this.businessSoftware.setPublisher(titleParts[0]);
+        this.businessSoftware.setApplicationName(titleParts[1]);
     }
 
     /**
@@ -102,7 +134,13 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @param   borrowerId    the id of the borrower.
      */
     public void setBorrower(String borrowerId) {
-        throw new UnsupportedOperationException("Not written");
+        if (borrowerId == null || borrowerId.length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        Matcher nonDigitChars = Pattern.compile("[^0-9]").matcher(borrowerId);
+        if (nonDigitChars.find()) {
+            throw new IllegalArgumentException("must only be digits");
+        }
     }
 
     /**
