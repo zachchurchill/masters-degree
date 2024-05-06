@@ -16,96 +16,54 @@ public class FloodFiller {
             throw new IllegalArgumentException();
         }
 
-        boolean keepFilling = true;
-        for (int j = p.y; j < this.image[p.x].length; ++j) {
-            if (this.image[p.x][j] != '.' && keepFilling) {
-                this.image[p.x][j] = substitute;
-            } else if (keepFilling) {
-                keepFilling = false;
+        char originalColor = this.image[p.x][p.y];
+        QueueImpl<Point> points = new QueueImpl<>();
+        Point point;
+        points.enqueue(p);
+        while(!points.isEmpty()) {
+            point = points.dequeue();
+            this.image[point.x][point.y] = substitute;
+            if (isLeftSameColor(point, originalColor)) {
+                points.enqueue(new Point(point.x, point.y - 1));
             }
-        }
-
-        for (int i = 0; i < p.x; ++i) {
-            for (int j = 0; j < this.image[i].length; ++j) {
-                if (this.image[i][j] == '.') {
-                    continue;
-                } else if (
-                    didBelowChange(new Point(i, j), substitute) ||
-                    didAboveChange(new Point(i, j), substitute) ||
-                    didLeftChange(new Point(i, j), substitute) ||
-                    didRightChange(new Point(i, j), substitute)
-                ) {
-                    this.image[i][j] = substitute;
-                }
+            if (isRightSameColor(point, originalColor)) {
+                points.enqueue(new Point(point.x, point.y + 1));
             }
-            for (int j = this.image[i].length - 1; j >= 0 ; --j) {
-                if (this.image[i][j] == '.') {
-                    continue;
-                } else if (
-                    didBelowChange(new Point(i, j), substitute) ||
-                    didAboveChange(new Point(i, j), substitute) ||
-                    didLeftChange(new Point(i, j), substitute) ||
-                    didRightChange(new Point(i, j), substitute)
-                ) {
-                    this.image[i][j] = substitute;
-                }
+            if (isAboveSameColor(point, originalColor)) {
+                points.enqueue(new Point(point.x - 1, point.y));
             }
-        }
-
-        for (int i = p.x + 1; i < this.image.length; ++i) {
-            for (int j = 0; j < this.image[i].length; ++j) {
-                if (this.image[i][j] == '.') {
-                    continue;
-                } else if (
-                    didBelowChange(new Point(i, j), substitute) ||
-                    didAboveChange(new Point(i, j), substitute) ||
-                    didLeftChange(new Point(i, j), substitute) ||
-                    didRightChange(new Point(i, j), substitute)
-                ) {
-                    this.image[i][j] = substitute;
-                }
-            }
-            for (int j = this.image[i].length - 1; j >= 0 ; --j) {
-                if (this.image[i][j] == '.') {
-                    continue;
-                } else if (
-                    didBelowChange(new Point(i, j), substitute) ||
-                    didAboveChange(new Point(i, j), substitute) ||
-                    didLeftChange(new Point(i, j), substitute) ||
-                    didRightChange(new Point(i, j), substitute)
-                ) {
-                    this.image[i][j] = substitute;
-                }
+            if (isBelowSameColor(point, originalColor)) {
+                points.enqueue(new Point(point.x + 1, point.y));
             }
         }
     }
 
-    private boolean didLeftChange(Point p, char substitute) {
+    private boolean isLeftSameColor(Point p, char color) {
         if (p.y - 1 < 0) {
             return false;
         }
-        return this.image[p.x][p.y - 1] == substitute;
+        return this.image[p.x][p.y - 1] == color;
     }
 
-    private boolean didRightChange(Point p, char substitute) {
+    private boolean isRightSameColor(Point p, char color) {
         if (p.y + 1 >= this.image[0].length) {
             return false;
         }
-        return this.image[p.x][p.y + 1] == substitute;
+        return this.image[p.x][p.y + 1] == color;
     }
 
-    private boolean didAboveChange(Point p, char substitute) {
+    private boolean isAboveSameColor(Point p, char color) {
         if (p.x - 1 < 0) {
             return false;
         }
-        return this.image[p.x - 1][p.y] == substitute;
+        return this.image[p.x - 1][p.y] == color;
     }
 
-    private boolean didBelowChange(Point p, char substitute) {
+    private boolean isBelowSameColor(Point p, char color) {
         if (p.x + 1 >= this.image.length) {
             return false;
         }
-        return this.image[p.x + 1][p.y] == substitute;
+        return this.image[p.x + 1][p.y] == color;
     }
 
     @Override
