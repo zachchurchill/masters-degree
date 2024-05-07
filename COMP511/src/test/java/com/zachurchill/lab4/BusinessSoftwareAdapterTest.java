@@ -2,6 +2,9 @@ package com.zachurchill.lab4;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -17,7 +20,7 @@ public class BusinessSoftwareAdapterTest {
         this.software.setPublisher("ZAC Enterprises");
         this.software.setBusinessId(1984);
         this.software.setApplicationName("Adapter 'de Extraordinaire");
-        this.software.setDateToBeReturned("01/01/2030");
+        this.software.setDateToBeReturned("12/01/2030");
     }
 
     @Test
@@ -31,6 +34,7 @@ public class BusinessSoftwareAdapterTest {
         BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
         assertThrows(IllegalArgumentException.class, () -> adapter.setCallNumber(null));
         assertThrows(IllegalArgumentException.class, () -> adapter.setTitle(null));
+        assertThrows(IllegalArgumentException.class, () -> adapter.setBorrower("0"));
     }
 
     @Test
@@ -42,11 +46,11 @@ public class BusinessSoftwareAdapterTest {
     }
 
     @Test
-    public void testSetCallNumberSpecialCharThrowsError() {
+    public void testCallNumberNeedsAtleastOneAlphanumeric() {
         BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
-        assertThrows(IllegalArgumentException.class, () -> adapter.setCallNumber("@asdf"));
-        assertThrows(IllegalArgumentException.class, () -> adapter.setCallNumber("asdf!"));
         assertThrows(IllegalArgumentException.class, () -> adapter.setCallNumber("^?!"));
+        adapter.setCallNumber("asdf!");
+        assertEquals("asdf!", adapter.getCallNumber());
     }
 
     @Test
@@ -92,5 +96,70 @@ public class BusinessSoftwareAdapterTest {
     public void testSetBorrowerShouldOnlyContainDigits() {
         BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
         assertThrows(IllegalArgumentException.class, () -> adapter.setBorrower("asdf234"));
+    }
+
+    @Test
+    public void testGetBorrowerReturnsBusinessId() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        assertEquals(String.format("%d", this.software.getBusinessId()), adapter.getBorrower());
+    }
+
+    @Test
+    public void testSetBorrowerHappyPath() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        adapter.setBorrower("13908");
+        assertEquals("13908", adapter.getBorrower());
+    }
+
+    @Test
+    public void testGetBorrowerIdNullIfBusinessIdZero() {
+        this.software.setBusinessId(0);
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        assertNull(adapter.getBorrower());
+    }
+
+    @Test
+    public void testSetBorrowerToNullSetsBusinessIdNull() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        adapter.setBorrower(null);
+        assertEquals(0, this.software.getBusinessId());
+        assertNull(adapter.getBorrower());
+    }
+
+    @Test
+    public void testGetDueDate() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        GregorianCalendar dueDate = new GregorianCalendar(2030, 11, 2);  // 30 days prior for some reason
+        assertEquals(dueDate, adapter.getDueDate());
+    }
+
+    @Test
+    public void testSetDueDate() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        GregorianCalendar dueDate = new GregorianCalendar(2025, 11, 2);
+        adapter.setDueDate(dueDate);
+        assertEquals("12/01/2025", this.software.getDateToBeReturned());
+        assertEquals(dueDate, adapter.getDueDate());
+    }
+
+    @Test
+    public void testSetDateNull() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        adapter.setDueDate(null);
+        assertNull(this.software.getDateToBeReturned());
+        assertNull(adapter.getDueDate());
+    }
+
+    @Test
+    public void testCalculateFees() {
+        BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
+        GregorianCalendar currentDate = adapter.getDueDate();
+        assertEquals(new Dollar(0, 0), adapter.calculateFees(currentDate));
+
+        currentDate.add(Calendar.DAY_OF_MONTH, 1);
+        assertEquals(new Dollar(1, 0), adapter.calculateFees(currentDate));
+
+        currentDate.add(Calendar.DAY_OF_MONTH, 1);
+        assertEquals(new Dollar(2, 0), adapter.calculateFees(currentDate));
     }
 }

@@ -1,5 +1,6 @@
 package com.zachurchill.lab4;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
@@ -16,6 +17,7 @@ public class BusinessSoftwareAdapter implements MediaItem {
     private BusinessSoftware businessSoftware;
     private String callNumber;
     private int copyNumber;
+    private static final Dollar LATE_FEE_CHARGE = new Dollar(1, 0);
 
     public BusinessSoftwareAdapter(BusinessSoftware software) {
         this.businessSoftware = software;
@@ -39,9 +41,9 @@ public class BusinessSoftwareAdapter implements MediaItem {
         if (callNo == null || callNo.length() == 0) {
             throw new IllegalArgumentException();
         }
-        Matcher specialChars = Pattern.compile("[^a-zA-Z0-9]").matcher(callNo);
-        if (specialChars.find()) {
-            throw new IllegalArgumentException("no special characters");
+        Matcher alphanumeric = Pattern.compile("[a-zA-Z0-9]").matcher(callNo);
+        if (!alphanumeric.find()) {
+            throw new IllegalArgumentException("at least alphanumeric");
         }
         this.callNumber = callNo;
     }
@@ -107,7 +109,20 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @return  the due date.
      */
     public GregorianCalendar getDueDate() {
-        throw new UnsupportedOperationException("Not written");
+        String dateToBeReturned = this.businessSoftware.getDateToBeReturned();
+        if (dateToBeReturned == null) {
+            return null;
+        }
+
+        // expecting "mm/dd/yyyy" format
+        String[] parts = dateToBeReturned.split("/");
+        GregorianCalendar dueDate = new GregorianCalendar(
+            Integer.valueOf(parts[2]),  // year
+            Integer.valueOf(parts[0]),  // month
+            Integer.valueOf(parts[1])   // day
+        );
+        dueDate.add(Calendar.DATE, -30);
+        return dueDate;
     }
 
     /**
@@ -116,7 +131,16 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @param   date    the due date.
      */
     public void setDueDate(GregorianCalendar date) {
-        throw new UnsupportedOperationException("Not written");
+        String dateToBeReturned;
+        if (date == null) {
+           dateToBeReturned = null; 
+        } else {
+            date.add(Calendar.DAY_OF_MONTH, 30);
+            System.out.println(date.toString());
+            SimpleDateFormat expectedDateFmt = new SimpleDateFormat("MM/dd/yyyy");
+            dateToBeReturned = expectedDateFmt.format(date.getTime());
+        }
+        this.businessSoftware.setDateToBeReturned(dateToBeReturned);
     }
 
     /**
@@ -125,7 +149,11 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @return  the borrower id.
      */
     public String getBorrower() {
-        throw new UnsupportedOperationException("Not written");
+        int businessId = this.businessSoftware.getBusinessId();
+        if (businessId == 0) {
+            return null;
+        }
+        return String.format("%d", businessId);
     }
 
     /**
@@ -134,12 +162,17 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @param   borrowerId    the id of the borrower.
      */
     public void setBorrower(String borrowerId) {
-        if (borrowerId == null || borrowerId.length() == 0) {
-            throw new IllegalArgumentException();
-        }
-        Matcher nonDigitChars = Pattern.compile("[^0-9]").matcher(borrowerId);
-        if (nonDigitChars.find()) {
-            throw new IllegalArgumentException("must only be digits");
+        if (borrowerId == null) {
+            this.businessSoftware.setBusinessId(0);
+        } else {
+            if (borrowerId.length() == 0 || borrowerId == "0") {
+                throw new IllegalArgumentException();
+            }
+            Matcher nonDigitChars = Pattern.compile("[^0-9]").matcher(borrowerId);
+            if (nonDigitChars.find()) {
+                throw new IllegalArgumentException("must only be digits");
+            }
+            this.businessSoftware.setBusinessId(Integer.valueOf(borrowerId));
         }
     }
 
@@ -150,7 +183,12 @@ public class BusinessSoftwareAdapter implements MediaItem {
      * @return the amount of overdue fees.
      */
     public Money calculateFees(GregorianCalendar currentDate) {
-        throw new UnsupportedOperationException("Not written");
+        int daysPastDue = AnytownLibrary.calculateDateDiff(this.getDueDate(), currentDate);
+        if (daysPastDue > 0) {
+            return LATE_FEE_CHARGE.mul(daysPastDue);
+        } else {
+            return new Dollar(0, 0);
+        }
     }
 }
 
