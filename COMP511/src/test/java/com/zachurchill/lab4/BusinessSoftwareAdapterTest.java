@@ -129,14 +129,14 @@ public class BusinessSoftwareAdapterTest {
     @Test
     public void testGetDueDate() {
         BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
-        GregorianCalendar dueDate = new GregorianCalendar(2030, 11, 2);  // 30 days prior for some reason
+        GregorianCalendar dueDate = new GregorianCalendar(2030, 11, 1);  // recall, MONTH starts at 0...
         assertEquals(dueDate, adapter.getDueDate());
     }
 
     @Test
     public void testSetDueDate() {
         BusinessSoftwareAdapter adapter = new BusinessSoftwareAdapter(this.software);
-        GregorianCalendar dueDate = new GregorianCalendar(2025, 11, 2);
+        GregorianCalendar dueDate = new GregorianCalendar(2025, 11, 1);  // recall, MONTH starts at 0...
         adapter.setDueDate(dueDate);
         assertEquals("12/01/2025", this.software.getDateToBeReturned());
         assertEquals(dueDate, adapter.getDueDate());

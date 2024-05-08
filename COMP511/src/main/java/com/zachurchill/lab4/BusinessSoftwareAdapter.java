@@ -1,6 +1,5 @@
 package com.zachurchill.lab4;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
@@ -117,11 +116,10 @@ public class BusinessSoftwareAdapter implements MediaItem {
         // expecting "mm/dd/yyyy" format
         String[] parts = dateToBeReturned.split("/");
         GregorianCalendar dueDate = new GregorianCalendar(
-            Integer.valueOf(parts[2]),  // year
-            Integer.valueOf(parts[0]),  // month
-            Integer.valueOf(parts[1])   // day
+            Integer.valueOf(parts[2]),      // year
+            Integer.valueOf(parts[0]) - 1,  // month (0-based)
+            Integer.valueOf(parts[1])       // day
         );
-        dueDate.add(Calendar.DATE, -30);
         return dueDate;
     }
 
@@ -135,10 +133,10 @@ public class BusinessSoftwareAdapter implements MediaItem {
         if (date == null) {
            dateToBeReturned = null; 
         } else {
-            date.add(Calendar.DAY_OF_MONTH, 30);
-            System.out.println(date.toString());
-            SimpleDateFormat expectedDateFmt = new SimpleDateFormat("MM/dd/yyyy");
-            dateToBeReturned = expectedDateFmt.format(date.getTime());
+            int year = date.get(Calendar.YEAR);
+            int month = date.get(Calendar.MONTH) + 1;
+            int day = date.get(Calendar.DAY_OF_MONTH);
+            dateToBeReturned = String.format("%02d/%02d/%d", month, day, year);
         }
         this.businessSoftware.setDateToBeReturned(dateToBeReturned);
     }
