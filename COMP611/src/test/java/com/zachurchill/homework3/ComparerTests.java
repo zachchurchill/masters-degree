@@ -17,7 +17,7 @@ class ComparerTests {
   @Test
   public void testFalse() {
     assertFalse(this.comparer.compare("asdf", "qwerty"));
-    assertFalse(this.comparer.compare("asdf", "asdff"));
+    assertFalse(this.comparer.compare("asdf qwerty", "asdff qwerty"));
     assertFalse(this.comparer.compare("", "asdf"));
     assertFalse(this.comparer.compare("asdf", ""));
     assertFalse(this.comparer.compare("aa", "a"));
@@ -26,7 +26,8 @@ class ComparerTests {
   @Test
   public void testTrue() {
     assertTrue(this.comparer.compare("asdf", "asdf"));
+    assertTrue(this.comparer.compare("asdf qwerty", "asdf qwerty"));
     assertTrue(this.comparer.compare("", ""));
-    assertTrue(this.comparer.compare("a", "a"));
+    assertTrue(this.comparer.compare("a bb ccc", "a bb ccc"));
   }
 }
