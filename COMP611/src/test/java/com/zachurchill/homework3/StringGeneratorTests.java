@@ -2,6 +2,7 @@ package com.zachurchill.homework3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +28,9 @@ class StringGeneratorTests {
     expected.add("101");
     expected.add("011");
     expected.add("111");
-    assertTrue(expected.containsAll(this.strings.generateAllStrings(3, 2)));
-    assertTrue(this.strings.generateAllStrings(3, 2).containsAll(expected));
+    List<String> actual = this.strings.generateAllStrings(3, 2);
+    assertTrue(expected.containsAll(actual));
+    assertTrue(actual.containsAll(expected));
   }
 
   @Test
@@ -50,7 +52,8 @@ class StringGeneratorTests {
     expected.add("31");
     expected.add("32");
     expected.add("33");
-    assertTrue(expected.containsAll(this.strings.generateAllStrings(2, 4)));
-    assertTrue(this.strings.generateAllStrings(2, 4).containsAll(expected));
+    List<String> actual = this.strings.generateAllStrings(2, 4);
+    assertTrue(expected.containsAll(actual));
+    assertTrue(actual.containsAll(expected));
   }
 }
