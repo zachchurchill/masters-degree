@@ -54,3 +54,8 @@ and the search string was "child1",
 then the result would be "child1".
 If the search string was "root/",
 then the result would be "child1", "child2".
+
+## Weekly short answer
+
+This week was all about patterns. Specifically, we learned about the Composite design pattern and how it is typically mischaracterized and the Visitor design pattern. The Composite design pattern is characterized by a whole-part relationship between objects where it is key that they share the same interface. Similar to the example given in class on how to mistakenly say something is using the Composite design pattern could be the construction of a computer. While a computer is composed of many different parts that come together to make something functioning, these parts do not share the same interface (input/output sources, power supply, e.g.). This contrasts the examples shared in class where each component of an XML document has the same interface and it's more of a matter of how they fit together to make the structure meaningful. The Visitor design pattern makes use of a best practice of separating what changes from what remains the same in code. That is, we learned that to apply a visitor pattern we need to set up our tree traversal to make use of steps that can be performed by a given object without that object being knowledgeable of the tree traversal algorithm - we write the tree traversal code once and provide the ability for an object to be passed in to perform actions defined in the visitor.
+Weekly question: Although both are important for a well-rounded software engineer/problem solver, do you fall back on your knowledge of advanced data structures or reach for design patterns more often in your project work?

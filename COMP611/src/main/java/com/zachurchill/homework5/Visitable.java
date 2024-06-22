@@ -1,6 +1,6 @@
 package com.zachurchill.homework5;
 
-public interface Visitable
+public interface Visitable<T>
 {
-    void accept(Visitor visitor);
+    void accept(T visitor);
 }
